@@ -47,7 +47,7 @@ class UserKnowledge:
     """Update words and whether or not user knew them."""
     for word, known in zip(words, knowns):
       if word in self.knowledge: # Check first if the word exists in the dictionary
-        self.knowledge[word].add(known)
+        self.knowledge[word].add(bool(known))
       # else: ## TODO ##
       #   Possibly add it to the knowledge base and then give it more likelihood to be shown again...
 

@@ -164,7 +164,7 @@ class Evaluator():
 
   def score_sentences(self, sentences):
     """Scores sentences based on several tests. Returns average score."""
-    nlp_sentences = [self.spacy_model(sentence) for sentence in sentences]
+    nlp_sentences = [self.space_model(sentence) for sentence in sentences]
 
     scores = []
     scores.append(self.sentence_length_score(sentences))

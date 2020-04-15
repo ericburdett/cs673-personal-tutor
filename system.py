@@ -163,11 +163,11 @@ class ReaderSystem:
                 print('Unknown input or bad index:', inp)
                 input('Press any key to continue')
 
-            # Returning tokens in a format that the UserKnowledge class expects
-            unknown_tokens = list(tok_colors)
-            known_tokens = list(set(tokens) - set(unknown_tokens))
-            all_tokens = np.concatenate((unknown_tokens, known_tokens))
-            token_knowledge = np.concatenate((np.zeros(len(unknown_tokens)), np.ones(len(known_tokens))))
+        # Returning tokens in a format that the UserKnowledge class expects
+        unknown_tokens = list(tok_colors)
+        known_tokens = list(set(tok_to_ind) - set(unknown_tokens))
+        all_tokens = np.concatenate((unknown_tokens, known_tokens))
+        token_knowledge = np.concatenate((np.zeros(len(unknown_tokens)), np.ones(len(known_tokens))))
 
         return all_tokens, token_knowledge.astype(bool)
 
