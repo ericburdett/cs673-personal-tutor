@@ -1,5 +1,9 @@
 # PyCharm
 .idea
+
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# vim swp files
+*.swp
 
