@@ -83,7 +83,7 @@ class ReaderSystem:
 
         if tok_colors is None:
             tok_colors = {}
-        formatters = system._get_formatters(tokens)
+        formatters = self._get_formatters(tokens)
 
         # Below we just concat a bunch of strings
         # Definitely not the optimal way to handle it,
@@ -119,7 +119,7 @@ class ReaderSystem:
             #   in tokens, such as symbols and spcaes
             a = loc[1]
             b = tokens[i+1].loc[0] if i < (len(tokens)-1) else None
-            missing = sentence[a:b]
+            missing = self.sentence[a:b]
             nums_text += ' '*len(missing)
             pos += len(missing)
             sent_text += missing
@@ -137,6 +137,8 @@ class ReaderSystem:
 
         Lower case tokens would be in tok_colors.
         """
+
+        self.sentence = sentence
 
         tokens = self._get_tokens(sentence)
         tok_to_ind = self._get_tok_to_ind(tokens)
