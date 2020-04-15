@@ -2,6 +2,7 @@ from collections import Counter, namedtuple
 import os
 import re
 import textwrap
+import numpy as np
 
 try:
     from termcolor import colored
