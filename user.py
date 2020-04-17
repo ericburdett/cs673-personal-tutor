@@ -30,7 +30,8 @@ class WordMemory:
 
 
 class UserKnowledge:
-  def __init__(self, vocabulary_list, tokenizer, window=500, lower_bound=.9, upper_bound=1.):
+  def __init__(self, vocabulary_list, tokenizer, window=500,
+               lower_bound=.10, upper_bound=1.):
     # contains dictionary of word : WordMemoryObject
     self.ranking = dict(enumerate(vocabulary_list))
     self.knowledge = {word: WordMemory(rank=index)
