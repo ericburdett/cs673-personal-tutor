@@ -79,7 +79,6 @@ class ReaderSystem:
         tok_colors: {lower case token: text color} dict
         """
 
-        line = line_fill*self.width+'\n'
         tok_to_ind = self._get_tok_to_ind(tokens)
 
         if tok_colors is None:
@@ -91,11 +90,16 @@ class ReaderSystem:
         #   but since our strings are not very big,
         #   it doesn't really matter
 
-        pos = 0  # column count
+
+        pre_first_line = '  '
+        pre_line = '    '
+        fill_line = pre_line + line_fill*(self.width-len(pre_line))+'\n'
 
         # all the text, the text line for the numbers,
         # and the text for the sentence
-        all_text = nums_text = sent_text = ''
+        all_text = ''
+        nums_text = sent_text = pre_first_line
+        pos = len(pre_first_line)  # column count
         for i, (f, (tok, loc)) in enumerate(zip(formatters, tokens)):
             lower = tok.lower()
 
@@ -103,9 +107,9 @@ class ReaderSystem:
             if pos + len(tok) > self.width:
                 all_text += nums_text + '\n'
                 all_text += sent_text + '\n'
-                all_text += line*lines_between
-                nums_text = sent_text = ''
-                pos = 0
+                all_text += fill_line*lines_between
+                nums_text = sent_text = pre_line
+                pos = len(pre_line)
 
             # Add the coloring
             if lower in tok_colors:
