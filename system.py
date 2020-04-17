@@ -191,4 +191,3 @@ if __name__ == '__main__':
     # print(s)
 
     unknown_tokens = system.read_sentence(sentence)
-

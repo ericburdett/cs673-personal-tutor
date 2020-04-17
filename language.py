@@ -91,8 +91,12 @@ class LanguageModel():
   def get_sentence(self, prompt, length):
     """Returns a sentence from the prompt of at most length."""
     sequence = self.get_text(prompt, length)
-    end_index = len(prompt.split('. '))
-    return ".".join(sequence.split('.')[0:end_index]) + '.'
+    sentence = " ".join(sequence.split()) + '.' # Remove whitespace
+
+    end_index = 1 if '.' not in prompt else 2
+    sentence = ".".join(sentence.split('.')[0:end_index]) + "."
+    
+    return sentence
 
   def get_sentences(self, prompt, sentence_length, num_sentences):
     """Returns sentences from get_sentence."""
@@ -154,7 +158,10 @@ class Evaluator():
 
   def sentence_length_score(self, sentences):
     """Ranked scores sentences based on len(sentence), shorter better."""
-    return self.get_score(sentences, len, negate=False)
+    return self.get_score(sentences, self.single_length_score, negate=False)
+
+  def duplicate_word_score(self, sentences):
+    return self.get_score(sentences, self.single_duplicate_word_score, negate=False)
 
   def topic_score(self, sentences):
     return self.get_score(sentences, self.single_topic_score, negate=True)
@@ -168,11 +175,27 @@ class Evaluator():
 
     scores = []
     scores.append(self.sentence_length_score(sentences))
+    scores.append(self.duplicate_word_score(sentences))
     scores.append(self.topic_score(nlp_sentences))
     scores.append(self.related_score(nlp_sentences))
     # Append scores here for more tests
 
     return np.mean(scores, axis=0)
+  
+  def single_length_score(self, sentence): # This could potentially be more sophisticated as the user learns (i.e. score longer sentences higher)
+    if len(sentence.split(' ')) < 6:
+      return 1000 # Penalize sentences that are less then 6 words
+    else:
+      return len(sentence)
+
+  def contains_duplicates(self, word_list):
+    word_list_no_duplicates = set(word_list)
+    return len(word_list_no_duplicates) != len(word_list)
+
+  def single_duplicate_word_score(self, sentence):
+    word_list = sentence.split()
+    # Return score of 0 for no duplicates, 1 for duplicates
+    return int(self.contains_duplicates(word_list))
 
   def single_topic_score(self, sentence_doc):
     """Topic sort function."""
@@ -213,7 +236,7 @@ class Evaluator():
         similarity = 0
 
       if similarity >= 1: # Do not give a high similarity score if we are comparing a word with itself
-        similarity = 0
+        similarity = -100 # Give a really high penalty for repeat words
 
       similarities.append(similarity)
       # print('Comparing {} with {}, score: {:.4f}'.format(pair[0], pair[1], similarity))
@@ -221,5 +244,6 @@ class Evaluator():
     # print(similarities)
 
     return np.mean(similarities)
+
 
 

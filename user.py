@@ -30,7 +30,7 @@ class WordMemory:
 
 
 class UserKnowledge:
-  def __init__(self, vocabulary_list, tokenizer, window=500, lower_bound=.8, upper_bound=1.):
+  def __init__(self, vocabulary_list, tokenizer, window=500, lower_bound=.85, upper_bound=1.):
     # contains dictionary of word : WordMemoryObject
     self.ranking = dict(enumerate(vocabulary_list))
     self.knowledge = {word: WordMemory(rank=index)
@@ -69,7 +69,7 @@ class UserKnowledge:
     # punc_indices.append(self.tokenizer_vocab[self.tokenizer.tokenize(";")[0]])
 
     for mask_index in punc_indices:
-      mask[mask_index] = self.lower_bound - .05
+      mask[mask_index] = self.lower_bound
 
     # Iterate through the rankings in order...
     for index, word in self.ranking.items():
@@ -108,5 +108,3 @@ class UserKnowledge:
           mask[mask_index] = mask_value
 
     return mask
-
-
