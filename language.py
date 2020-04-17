@@ -79,6 +79,9 @@ class LanguageModel():
       logits = logits * self.mask # Apply the mask to the logits
 
       topk_logits = self.top_k_logits(logits)
+
+      # logits = topk_logits * self.mask # Apply the mask to the logits
+
       topk_log_probs = F.softmax(topk_logits, dim=-1)
       token = torch.multinomial(topk_log_probs, num_samples=1)
 
@@ -95,7 +98,7 @@ class LanguageModel():
 
     end_index = 1 if '.' not in prompt else 2
     sentence = ".".join(sentence.split('.')[0:end_index]) + "."
-    
+
     return sentence
 
   def get_sentences(self, prompt, sentence_length, num_sentences):
@@ -181,7 +184,7 @@ class Evaluator():
     # Append scores here for more tests
 
     return np.mean(scores, axis=0)
-  
+
   def single_length_score(self, sentence): # This could potentially be more sophisticated as the user learns (i.e. score longer sentences higher)
     if len(sentence.split(' ')) < 6:
       return 1000 # Penalize sentences that are less then 6 words
@@ -246,4 +249,9 @@ class Evaluator():
     return np.mean(similarities)
 
 
+
+if __name__ == '__main__':
+  K = 15
+  lm = LanguageModel(k=K)
+  lm.set_mask(np.ones(len(lm.tokenizer.get_vocab())))
 
