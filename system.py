@@ -133,7 +133,9 @@ class ReaderSystem:
         return all_text
 
     def read_sentence(self, sentence,
-                      lines_between=1, line_fill='-'):
+                      lines_between=1, line_fill='-',
+                      return_input=False,
+                      accept_input=True):
         """Read the sentence, getting user input.
 
         Wasn't sure what this should return, but probably a
@@ -149,7 +151,8 @@ class ReaderSystem:
         tok_to_ind = self._get_tok_to_ind(tokens)
         ind_to_tok = {v: k for k, v in tok_to_ind.items()}
         tok_colors = {}
-        while True:
+        inputs = []
+        while accept_input:
             os.system('clear')
             print('\n'*3)
             text = self._get_text(
@@ -162,6 +165,7 @@ class ReaderSystem:
             if inp == 'q':
                 break
             if inp.isdigit() and int(inp) in ind_to_tok:
+                inputs.append(int(inp))
                 tok_colors[ind_to_tok[int(inp)]] = 'red'
             else:
                 print('Unknown input or bad index:', inp)
@@ -170,10 +174,13 @@ class ReaderSystem:
         # Returning tokens in a format that the UserKnowledge class expects
         unknown_tokens = list(tok_colors)
         known_tokens = list(set(tok_to_ind) - set(unknown_tokens))
-        all_tokens = np.concatenate((unknown_tokens, known_tokens))
-        token_knowledge = np.concatenate((np.zeros(len(unknown_tokens)), np.ones(len(known_tokens))))
+        all_tokens = unknown_tokens + known_tokens
+        token_knowledge = ([False]*(len(unknown_tokens))
+                            + [True]*(len(known_tokens)))
 
-        return all_tokens, token_knowledge.astype(bool)
+        if return_input:
+            return all_tokens, token_knowledge, inputs
+        return all_tokens, token_knowledge
 
 
 
@@ -185,6 +192,8 @@ if __name__ == '__main__':
                 'took much much longer than it should have. It\'s also a '
                 'little tricky when you have random characters like !@#$#$%@# '
                 'in the middle.')
+    sentence = ('President Trump said there was growing talk over '
+                'his rise and it remains a secret.')
 
     # tokens = system._get_tokens(sentence)
     # tok_to_ind = system._get_tok_to_ind(tokens)
